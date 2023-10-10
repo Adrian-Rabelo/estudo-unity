@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     {
         Move();
         Jump();
+        CheckFall();
     }
 
     void Move()
@@ -45,6 +46,7 @@ public class Player : MonoBehaviour
             {
                 if (doubleJump)
                 {
+                    anim.SetBool("doubleJump", true);
                     rig.AddForce(new Vector2(0f, JumpForce), ForceMode2D.Impulse);
                     doubleJump = false;
                 }
@@ -80,11 +82,29 @@ public class Player : MonoBehaviour
         }
     }
 
+    /**
+     * Este método verifica a velocidade do jogador no eixo Y
+     * * Se ela for MENOR que 0, significa que o jogador está caindo, ou seja,
+     * * o sprite do player aindo deverá ser chamado
+     */
+    private void CheckFall()
+    {
+        if (rig.velocity.y < 0)
+        {
+            anim.SetBool("doubleJump", false);
+            anim.SetBool("fall", true);
+        }
+        else
+        {
+            anim.SetBool("fall", false);
+        }
+    }
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == 8)
         {
             isJumping = false;
+            anim.SetBool("fall", false);
             anim.SetBool("jump", false);
         }
     }
